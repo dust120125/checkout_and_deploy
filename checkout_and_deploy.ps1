@@ -243,7 +243,17 @@ if ($buildDeb)
     else
     {
         $debmakerDir = (Get-Item $debmaker).Directory.FullName
-        $deboutput_path = $conf.build_deb.output_path
+        if ($debIsProd)
+        {
+            $debproj = (Get-Item $conf.build_deb.debproj_prod).FullName
+			$deboutput_path = $conf.build_deb.output_path_prod
+        }
+        else
+        {
+            $debproj = (Get-Item $conf.build_deb.debproj_beta).FullName
+			$deboutput_path = $conf.build_deb.output_path_beta
+        }
+
         if ($deboutput_path -eq "")
         {
             $deboutput_path = "./"
@@ -255,15 +265,6 @@ if ($buildDeb)
         $deboutput_path = (Get-Item $deboutput_path).FullName
         $deboutput_name = $conf.build_deb.output_name
         $deboutput = Join-Path -Path $deboutput_path -ChildPath $deboutput_name
-
-        if ($debIsProd)
-        {
-            $debproj = (Get-Item $conf.build_deb.debproj_prod).FullName
-        }
-        else
-        {
-            $debproj = (Get-Item $conf.build_deb.debproj_beta).FullName
-        }
 
         cd $debmakerDir
         $params = @("`"$debproj`"", "--version", "`"$debVersion`"", "--path", "`"$deboutput`"")
