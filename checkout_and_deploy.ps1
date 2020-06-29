@@ -45,8 +45,8 @@ if ($conf.build_deb -and ($conf.build_deb.debproj_beta -or $conf.build_deb.debpr
     $buildDeb = Confirm -Prompt "Build .deb file ?"
     if ($buildDeb)
     {
-        $debVersion = (Read-Host -Prompt "Build version: ").Trim()
-        $debRemark = (Read-Host -Prompt "Remark: ").Trim()
+        $debVersion = (Read-Host -Prompt "Build version").Trim()
+        $debRemark = (Read-Host -Prompt "Remark").Trim()
         $debIsProd = Confirm -Prompt "Is production build ?"
         $debUpload = Confirm -Prompt "Upload after build ?"
     }
