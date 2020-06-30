@@ -283,7 +283,10 @@ if ($buildDeb)
         }
         $paramsStr = $params -Join " "
         echo "./winmakedeb.exe $paramsStr"
-        Start-Process -FilePath "./winmakedeb.exe" -ArgumentList $params -Wait -NoNewWindow
+        $makedebProcess = Start-Process -FilePath "./winmakedeb.exe" -ArgumentList $params -Wait -NoNewWindow -PassThru
+        if ($makedebProcess.ExitCode -ne 0){
+            $succ = $false
+        }
     }
 }
 
