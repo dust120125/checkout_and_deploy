@@ -15,7 +15,7 @@ $succ = $?
 if ($succ)
 {
     $version = $latest_release.tag_name
-    $body = $latest_release.body
+    $body = ($latest_release.body.split("`n") | % {"    $_"}) -Join "`n"
     $download_url = $latest_release.assets[0].browser_download_url
     $filename = $latest_release.assets[0].name
 }
@@ -23,7 +23,8 @@ if ($succ)
 if ($succ)
 {
     Write-Host "Version: $version" -ForegroundColor Yellow
-    Write-Host "Release note: $body" -ForegroundColor Yellow
+    Write-Host "Release note:" -ForegroundColor Yellow
+    Write-Host $body
     Write-Host "Downloading..." -ForegroundColor Yellow
     Invoke-WebRequest $download_url -OutFile $filename
     $succ = $?
