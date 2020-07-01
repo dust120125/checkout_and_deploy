@@ -231,7 +231,7 @@ if ($succ -and $conf.deploy -and $conf.after_deploy)
 cd $PSScriptRoot
 Write-Host ""
 
-if ($buildDeb)
+if ($succ -and $buildDeb)
 {
     Write-Host "#### Build .deb ####" -ForegroundColor Black -BackgroundColor Yellow
     $debmaker = "$localStorge\winmakedeb\winmakedeb.exe"
