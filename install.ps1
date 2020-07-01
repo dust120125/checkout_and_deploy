@@ -1,3 +1,13 @@
+Write-Host ""
+Write-Host "***********************************************" -ForegroundColor Green
+Write-Host "***********************************************" -ForegroundColor Green
+Write-Host "**** This script will get latest release   ****" -ForegroundColor Green
+Write-Host "**** information of `"checkout_and_deploy`", ****" -ForegroundColor Green
+Write-Host "**** then downlaod the latest release      ****" -ForegroundColor Green
+Write-Host "***********************************************" -ForegroundColor Green
+Write-Host "***********************************************" -ForegroundColor Green
+Write-Host ""
+
 $succ = $false
 Write-Host "Getting release information..." -ForegroundColor Yellow
 $latest_release = (Invoke-WebRequest "https://api.github.com/repos/dust120125/checkout_and_deploy/releases/latest").Content | ConvertFrom-Json
@@ -5,6 +15,7 @@ $succ = $?
 if ($succ)
 {
     $version = $latest_release.tag_name
+    $body = $latest_release.body
     $download_url = $latest_release.assets[0].browser_download_url
     $filename = $latest_release.assets[0].name
 }
@@ -12,6 +23,7 @@ if ($succ)
 if ($succ)
 {
     Write-Host "Version: $version" -ForegroundColor Yellow
+    Write-Host "Release note: $body" -ForegroundColor Yellow
     Write-Host "Downloading..." -ForegroundColor Yellow
     Invoke-WebRequest $download_url -OutFile $filename
     $succ = $?
