@@ -48,7 +48,6 @@ if ($conf.build_deb -and ($conf.build_deb.debproj_beta -or $conf.build_deb.debpr
         $debIsProd = Confirm -Prompt "Is production build ?"
         $debVersion = (Read-Host -Prompt "Build version").Trim()
         $debRemark = (Read-Host -Prompt "Remark").Trim()
-        $debUpload = Confirm -Prompt "Upload after build ?"
     }
 }
 
@@ -271,10 +270,6 @@ if ($buildDeb)
         if ($debIsProd)
         {
             $params += "--production"
-        }
-        if ($debUpload)
-        {
-            $params += "--upload"
         }
         if ($debRemark) {
             $debRemark = $debRemark -Replace '"', '""'
