@@ -28,6 +28,11 @@ dir $localStorge -Filter *.json | % { Write-Host $_.BaseName -ForegroundColor Ye
 Write-Host ""
 $proj = Read-Host -Prompt "Choose project to ckeckout..."
 Write-Host ""
+
+$datetime = Get-Date -Format "yyyyMMddHHmmss"
+$logFile = Join-Path $localStorge -ChildPath "log" | Join-Path -ChildPath "${proj}_$datetime.log"
+Start-Transcript -Path $logFile | Out-Null
+
 if (-Not(Test-Path "$localStorge\$proj`.json"))
 {
     Write-Host ("Clone failed`nProject [$proj] is not exist.")
@@ -297,4 +302,5 @@ else
 }
 
 Write-Host "Press any key to exit..." -ForegroundColor Gray
+Stop-Transcript | Out-Null
 cmd /c Pause | Out-Null
