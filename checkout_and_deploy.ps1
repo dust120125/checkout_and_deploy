@@ -1,3 +1,21 @@
+## Read Config ###
+$_ConfigFile = "./config.ini"
+$_config = cat $_ConfigFile | ConvertFrom-Json
+
+### Check Update ###
+
+if ($_config.check_update)
+{
+    ./install.ps1 -CheckUpdate $true
+    if ($LASTEXITCODE -eq 0)
+    {
+        Write-Host "Press any key to exit..." -ForegroundColor Gray
+        cmd /c Pause | Out-Null
+        exit
+    }
+    Write-Host ""
+}
+
 ### functions ###
 
 function Confirm
@@ -33,7 +51,7 @@ $datetime = Get-Date -Format "yyyyMMddHHmmss"
 $logFile = Join-Path $localStorge -ChildPath "log" | Join-Path -ChildPath "${proj}_$datetime.log"
 Start-Transcript -Path $logFile | Out-Null
 
-if (-Not(Test-Path "$localStorge\$proj`.json"))
+if (-Not(Test-Path "$localStorge\$proj`.json" -PathType Leaf))
 {
     Write-Host ("Clone failed`nProject [$proj] is not exist.")
     cmd /c Pause | Out-Null
@@ -250,19 +268,19 @@ if ($succ -and $buildDeb)
         if ($debIsProd)
         {
             $debproj = (Get-Item $conf.build_deb.debproj_prod).FullName
-			$deboutput_path = $conf.build_deb.output_path_prod
+            $deboutput_path = $conf.build_deb.output_path_prod
         }
         else
         {
             $debproj = (Get-Item $conf.build_deb.debproj_beta).FullName
-			$deboutput_path = $conf.build_deb.output_path_beta
+            $deboutput_path = $conf.build_deb.output_path_beta
         }
 
         if ($deboutput_path -eq "")
         {
             $deboutput_path = "./"
         }
-        if (-not (Test-Path $deboutput_path))
+        if (-not(Test-Path $deboutput_path))
         {
             New-Item -ItemType directory $deboutput_path | Out-Null
         }
@@ -276,7 +294,8 @@ if ($succ -and $buildDeb)
         {
             $params += "--production"
         }
-        if ($debRemark) {
+        if ($debRemark)
+        {
             $debRemark = $debRemark -Replace '"', '""'
             $params += "--remark"
             $params += "`"$debRemark`""
@@ -284,7 +303,8 @@ if ($succ -and $buildDeb)
         $paramsStr = $params -Join " "
         echo "./winmakedeb.exe $paramsStr"
         $makedebProcess = Start-Process -FilePath "./winmakedeb.exe" -ArgumentList $params -Wait -NoNewWindow -PassThru
-        if ($makedebProcess.ExitCode -ne 0){
+        if ($makedebProcess.ExitCode -ne 0)
+        {
             $succ = $false
         }
     }
