@@ -1,6 +1,9 @@
 ## Read Config ###
 $_ConfigFile = "./config.ini"
-$_config = cat $_ConfigFile | ConvertFrom-Json
+if (Test-Path $_ConfigFile -PathType Leaf)
+{
+    $_config = cat $_ConfigFile | ConvertFrom-Json
+}
 
 ### Check Update ###
 
@@ -35,6 +38,31 @@ function Confirm
     }
 }
 
+$_GeneralEnv = $null
+function Get-EnvCode
+{
+    Param([Hashtable]$EnvMap, [String]$Prompt)
+    if ($null -ne $_GeneralEnv -and $EnvMap.ContainsKey($_GeneralEnv))
+    {
+        $_tmp = $EnvMap[$_GeneralEnv]
+        if ($Prompt) {
+            Write-Host "${Prompt}: $_tmp"
+        }
+        return $_tmp
+    }
+    else
+    {
+        if (!$Prompt)
+        {
+            $_input = Read-Host
+        }
+        else
+        {
+            $_input = Read-Host -Prompt $Prompt
+        }
+        return $_input
+    }
+}
 
 ### Start Process ###
 
@@ -44,8 +72,17 @@ $localStorge = ".\$PSScriptName"
 Write-Host Projects:
 dir $localStorge -Filter *.json | % { Write-Host $_.BaseName -ForegroundColor Yellow }
 Write-Host ""
-$proj = Read-Host -Prompt "Choose project to ckeckout..."
+$input = Read-Host -Prompt "Choose project to ckeckout..."
 Write-Host ""
+
+$input = $input -split ":"
+$proj = $input[0]
+Write-Host "project: $proj" -ForegroundColor Yellow
+if ($input.Length -gt 1)
+{
+    $_GeneralEnv = $input[1]
+    Write-Host "general env: $_GeneralEnv`n" -ForegroundColor Yellow
+}
 
 $datetime = Get-Date -Format "yyyyMMddHHmmss"
 $logFile = Join-Path $localStorge -ChildPath "log" | Join-Path -ChildPath "${proj}_$datetime.log"
